@@ -23,15 +23,7 @@ type ReadonlyBingoGridProps = {
   mode: "play";
 };
 
-type ReviewBingoGridProps = {
-  draftValues: DraftValues;
-  mode: "review";
-};
-
-type BingoGridProps =
-  | EditableBingoGridProps
-  | ReadonlyBingoGridProps
-  | ReviewBingoGridProps;
+type BingoGridProps = EditableBingoGridProps | ReadonlyBingoGridProps;
 
 export default function BingoGrid(props: BingoGridProps) {
   return (
@@ -99,48 +91,7 @@ export default function BingoGrid(props: BingoGridProps) {
               );
             }),
           )
-        : props.mode === "review"
-          ? props.draftValues.map((row, rowIndex) =>
-              row.map((value, columnIndex) => {
-                const isCenter = isCellCoordinateCenter(rowIndex, columnIndex);
-                const isEmpty = value.trim().length === 0;
-
-                if (isCenter) {
-                  return (
-                    <div
-                      key={`${rowIndex}-${columnIndex}`}
-                      className="flex aspect-square flex-col items-center justify-center rounded-[1.5rem] border border-emerald-300 bg-emerald-100 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]"
-                    >
-                      <span className="text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-emerald-700 sm:text-[0.62rem]">
-                        FREE
-                      </span>
-                      <span className="mt-1.5 text-[clamp(1rem,4.8vw,1.7rem)] font-semibold text-emerald-950">
-                        FREE
-                      </span>
-                    </div>
-                  );
-                }
-
-                return (
-                  <div
-                    key={`${rowIndex}-${columnIndex}`}
-                    className={`flex aspect-square flex-col items-center justify-center rounded-[1.5rem] border px-1.5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] ${
-                      isEmpty
-                        ? "border-amber-300 bg-amber-50 text-amber-900"
-                        : "border-stone-200 bg-stone-50 text-stone-900"
-                    }`}
-                  >
-                    <span className="text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-stone-500 sm:text-[0.62rem]">
-                      {COLUMN_LABELS[columnIndex]}
-                    </span>
-                    <span className="mt-1.5 text-[clamp(1rem,4.8vw,1.7rem)] font-semibold">
-                      {isEmpty ? "--" : value}
-                    </span>
-                  </div>
-                );
-              }),
-            )
-          : props.card.map((row, rowIndex) =>
+        : props.card.map((row, rowIndex) =>
             row.map((cell, columnIndex) => {
               const open = isCellOpen(cell, props.calledNumbers);
 

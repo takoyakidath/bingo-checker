@@ -2,13 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   analyzeSequentialInput,
   buildCardFromDraft,
-  clampCropRect,
-  createCenteredCropRect,
   createDraftFromSequence,
   getDrawErrorMessage,
-  getScanCellRects,
   serializeDraftValues,
-  setCropZoom,
 } from "@/app/lib/bingo";
 
 describe("bingo helpers", () => {
@@ -56,57 +52,5 @@ describe("bingo helpers", () => {
       "その番号はすでに入力済みです。",
     );
     expect(getDrawErrorMessage("15", [])).toBeNull();
-  });
-
-  it("keeps crop rectangles inside the source image while zooming", () => {
-    const initialCrop = createCenteredCropRect(1200, 1600, 1);
-    const zoomedCrop = setCropZoom(initialCrop, 1200, 1600, 2);
-
-    expect(initialCrop).toEqual({
-      left: 0,
-      size: 1200,
-      top: 200,
-    });
-    expect(zoomedCrop).toEqual({
-      left: 300,
-      size: 600,
-      top: 500,
-    });
-    expect(clampCropRect({ left: -20, top: 900, size: 800 }, 1000, 1200)).toEqual(
-      {
-        left: 0,
-        size: 800,
-        top: 400,
-      },
-    );
-  });
-
-  it("computes the 24 scan cell rectangles from an adjusted square crop", () => {
-    const scanCellRects = getScanCellRects(1000);
-
-    expect(scanCellRects).toHaveLength(24);
-    expect(scanCellRects[0]).toMatchObject({
-      columnIndex: 0,
-      left: 36,
-      rowIndex: 0,
-      size: 128,
-      top: 36,
-    });
-    expect(scanCellRects[11]).toMatchObject({
-      columnIndex: 1,
-      rowIndex: 2,
-    });
-    expect(
-      scanCellRects.some(
-        (cellRect) => cellRect.rowIndex === 2 && cellRect.columnIndex === 2,
-      ),
-    ).toBe(false);
-    expect(scanCellRects[23]).toMatchObject({
-      columnIndex: 4,
-      left: 836,
-      rowIndex: 4,
-      size: 128,
-      top: 836,
-    });
   });
 });

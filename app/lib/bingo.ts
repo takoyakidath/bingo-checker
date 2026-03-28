@@ -4,8 +4,6 @@ export const MIN_NUMBER = 1;
 export const MAX_NUMBER = 75;
 export const COLUMN_LABELS = ["B", "I", "N", "G", "O"] as const;
 export const CARD_NUMBER_COUNT = GRID_SIZE * GRID_SIZE - 1;
-export const DEFAULT_SCAN_CROP_SCALE = 0.92;
-export const DEFAULT_SCAN_CELL_INSET_RATIO = 0.18;
 
 export type NumberCell = {
   kind: "number";
@@ -24,18 +22,6 @@ export type DraftValues = string[][];
 export type Coordinate = {
   rowIndex: number;
   columnIndex: number;
-};
-
-export type CropRect = {
-  left: number;
-  top: number;
-  size: number;
-};
-
-export type ScanCellRect = Coordinate & {
-  left: number;
-  top: number;
-  size: number;
 };
 
 export type CardBuildResult = {
@@ -66,108 +52,6 @@ export function createEmptyDraft(): DraftValues {
   return Array.from({ length: GRID_SIZE }, () =>
     Array.from({ length: GRID_SIZE }, () => ""),
   );
-}
-
-export function clampCropRect(
-  cropRect: CropRect,
-  imageWidth: number,
-  imageHeight: number,
-): CropRect {
-  const maxSize = Math.max(1, Math.min(imageWidth, imageHeight));
-  const size = Math.max(1, Math.min(Math.round(cropRect.size), maxSize));
-  const maxLeft = Math.max(0, imageWidth - size);
-  const maxTop = Math.max(0, imageHeight - size);
-
-  return {
-    left: Math.max(0, Math.min(Math.round(cropRect.left), maxLeft)),
-    top: Math.max(0, Math.min(Math.round(cropRect.top), maxTop)),
-    size,
-  };
-}
-
-export function createCenteredCropRect(
-  imageWidth: number,
-  imageHeight: number,
-  scale = DEFAULT_SCAN_CROP_SCALE,
-): CropRect {
-  const baseSize = Math.min(imageWidth, imageHeight);
-  const size = Math.max(1, Math.round(baseSize * scale));
-
-  return clampCropRect(
-    {
-      left: (imageWidth - size) / 2,
-      top: (imageHeight - size) / 2,
-      size,
-    },
-    imageWidth,
-    imageHeight,
-  );
-}
-
-export function getCropZoom(
-  cropRect: CropRect,
-  imageWidth: number,
-  imageHeight: number,
-) {
-  const baseSize = Math.max(1, Math.min(imageWidth, imageHeight));
-  return baseSize / cropRect.size;
-}
-
-export function setCropZoom(
-  cropRect: CropRect,
-  imageWidth: number,
-  imageHeight: number,
-  zoom: number,
-): CropRect {
-  const baseSize = Math.max(1, Math.min(imageWidth, imageHeight));
-  const nextZoom = Math.max(1, zoom);
-  const size = baseSize / nextZoom;
-  const centerX = cropRect.left + cropRect.size / 2;
-  const centerY = cropRect.top + cropRect.size / 2;
-
-  return clampCropRect(
-    {
-      left: centerX - size / 2,
-      top: centerY - size / 2,
-      size,
-    },
-    imageWidth,
-    imageHeight,
-  );
-}
-
-export function moveCropRect(
-  cropRect: CropRect,
-  deltaX: number,
-  deltaY: number,
-  imageWidth: number,
-  imageHeight: number,
-): CropRect {
-  return clampCropRect(
-    {
-      left: cropRect.left + deltaX,
-      top: cropRect.top + deltaY,
-      size: cropRect.size,
-    },
-    imageWidth,
-    imageHeight,
-  );
-}
-
-export function getScanCellRects(
-  squareSize: number,
-  cellInsetRatio = DEFAULT_SCAN_CELL_INSET_RATIO,
-): ScanCellRect[] {
-  const cellSize = squareSize / GRID_SIZE;
-  const cellInset = cellSize * cellInsetRatio;
-
-  return INPUT_COORDINATES.map(({ rowIndex, columnIndex }) => ({
-    rowIndex,
-    columnIndex,
-    left: Math.round(columnIndex * cellSize + cellInset),
-    top: Math.round(rowIndex * cellSize + cellInset),
-    size: Math.round(cellSize - cellInset * 2),
-  }));
 }
 
 export function isCellCoordinateCenter(rowIndex: number, columnIndex: number) {
