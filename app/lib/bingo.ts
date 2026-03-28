@@ -78,6 +78,20 @@ export function createDraftFromSequence(
   return nextDraft;
 }
 
+export function createDraftFromDetectedValues(
+  values: Array<number | null>,
+): DraftValues {
+  const nextDraft = createEmptyDraft();
+
+  INPUT_COORDINATES.forEach(({ rowIndex, columnIndex }, index) => {
+    const currentValue = values[index];
+    nextDraft[rowIndex][columnIndex] =
+      typeof currentValue === "number" ? String(currentValue) : "";
+  });
+
+  return nextDraft;
+}
+
 export function serializeDraftValues(draftValues: DraftValues) {
   return INPUT_COORDINATES.map(
     ({ rowIndex, columnIndex }) => draftValues[rowIndex][columnIndex].trim(),

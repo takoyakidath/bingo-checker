@@ -117,8 +117,8 @@ export default function BingoChecker() {
       return;
     }
 
-    setDraftValues(createDraftFromSequence(result.numbers));
-    setSequentialInput(result.numbers.join(" "));
+    setDraftValues(result.draftValues);
+    setSequentialInput(serializeDraftValues(result.draftValues));
   }
 
   function updateDraftValue(
@@ -292,7 +292,7 @@ export default function BingoChecker() {
       <section className="rounded-[2.2rem] border border-white/70 bg-white/88 p-3 shadow-[0_26px_80px_rgba(58,42,19,0.08)] backdrop-blur sm:p-5">
         {isCameraOpen ? (
           <div className="mb-5 rounded-[1.8rem] border border-stone-200 bg-stone-950 p-3 text-white shadow-[0_20px_60px_rgba(28,25,23,0.24)]">
-            <div className="overflow-hidden rounded-[1.4rem] bg-black">
+            <div className="relative overflow-hidden rounded-[1.4rem] bg-black">
               <video
                 ref={videoRef}
                 autoPlay
@@ -300,6 +300,16 @@ export default function BingoChecker() {
                 muted
                 playsInline
               />
+              <div className="pointer-events-none absolute inset-[8%] rounded-[1.2rem] border border-white/70 shadow-[0_0_0_999px_rgba(0,0,0,0.2)]">
+                <div className="grid h-full w-full grid-cols-5 grid-rows-5">
+                  {Array.from({ length: 25 }, (_, index) => (
+                    <div
+                      key={index}
+                      className="border border-white/12"
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
             <p className="mt-3 px-1 text-sm leading-6 text-white/72">
               カード全体が入るように合わせてから撮影してください。
