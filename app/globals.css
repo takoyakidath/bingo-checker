@@ -24,6 +24,7 @@ html {
     radial-gradient(circle at top right, rgba(45, 212, 191, 0.18), transparent 28%),
     linear-gradient(180deg, #f6f0e6 0%, #efe6d8 100%);
   color: var(--foreground);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -38,6 +39,12 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+button,
+label {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 ::selection {
